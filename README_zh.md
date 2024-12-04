@@ -2,7 +2,7 @@
 
 <p align="center">AI学术论文搜索通过用户的关键字在Arxiv和Google学术中搜索论文，使用AI对论文内容加以解析，并提供生成全文摘要、全文翻译等功能，还可以将论文内容作为上下文，通过与AI对话快速深入理解论文。</p>
 
-<p align="center"><a href="https://302.ai/tools/word/" target="blank"><img src="https://file.302ai.cn/gpt/imgs/badge/21212.png" /></a></p >
+<p align="center"><a href="https://302.ai/tools/word/" target="blank"><img src="https://file.302ai.cn/gpt/imgs/github/302_badge.png" /></a></p >
 
 <p align="center"><a href="README zh.md">中文</a> | <a href="README.md">English</a> | <a href="README_ja.md">日本語</a></p>
 
@@ -13,9 +13,16 @@
 或者对本项目根据自己的需求进行修改，传入302.AI的API KEY，自行部署。
 
 ## 界面预览
-![界面预览](docs/preview.jpg)
-![界面预览](docs/preview2.jpg)
-![界面预览](docs/preview3.jpg)
+通过用户的描述在Arxiv和Google学术中搜索论文。
+![界面预览](docs/preview.jpg)    
+
+使用AI对论文内容加以解析，生成全文摘要。
+![界面预览](docs/preview2.jpg)     
+
+使用AI对论文内容加以解析，生成全文翻译。
+![界面预览](docs/preview3.jpg)     
+
+将论文内容作为上下文，通过与AI对话快速深入理解论文。
 ![界面预览](docs/preview4.jpg)
 
 ## 项目特性

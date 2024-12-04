@@ -6,6 +6,7 @@
 
 <p align="center"><a href="README zh.md">中文</a> | <a href="README.md">English</a> | <a href="README_ja.md">日本語</a></p>
 
+![インターフェースプレビュー](docs/AI学术论文搜索jp.png) 
 
 これは、[302.AI](https://302.ai)による[AI学術論文検索](https://302.ai/tools/academic/)のオープンソースバージョンです。302.AIに直接ログインしてコード不要でオンラインバージョンを利用することができます。また、このプロジェクトを自身のニーズに合わせて変更し、302.AIのAPIキーを入力して自分でデプロイすることも可能です。
 

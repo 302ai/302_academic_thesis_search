@@ -2,9 +2,9 @@
 
 <p align="center">AI による学術論文検索では、ユーザーのキーワードを元に、Arxiv や Google Scholar で論文を検索し、AI を使って論文の内容を解析します。また、全文要約や全文翻訳などの機能を提供し、論文の内容をコンテキストとして利用し、AI との会話を通じて迅速かつ深く論文を理解することもできます。</p>
 
-<p align="center"><a href="https://302.ai/tools/word/" target="blank"><img src="https://file.302ai.cn/gpt/imgs/github/302_badge.png" /></a></p >
+<p align="center"><a href="https://302.ai/ja/tools/academic/" target="blank"><img src="https://file.302ai.cn/gpt/imgs/github/302_badge.png" /></a></p >
 
-<p align="center"><a href="README zh.md">中文</a> | <a href="README.md">English</a> | <a href="README_ja.md">日本語</a></p>
+<p align="center"><a href="README_zh.md">中文</a> | <a href="README.md">English</a> | <a href="README_ja.md">日本語</a></p>
 
 ![インターフェースプレビュー](docs/AI学术论文搜索jp.png) 
 

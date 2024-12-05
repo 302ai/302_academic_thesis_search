@@ -8,7 +8,7 @@
 
 ![Interface Preview](docs/AI学术论文搜索en.png)  
 
-This is the open-source version of the [AI Academic Paper Search](https://302.ai/tools/academic/) by [302.AI](https://302.ai). You can log in directly to 302.AI and use the online version with zero code and zero configuration, or modify this project according to your own needs, input your API KEY from 302.AI, and deploy it yourself.
+This is the open-source version of the [AI Academic Paper Search](https://302.ai/en/tools/academic/) by [302.AI](https://302.ai). You can log in directly to 302.AI and use the online version with zero code and zero configuration, or modify this project according to your own needs, input your API KEY from 302.AI, and deploy it yourself.
 
 
 ## Interface Preview

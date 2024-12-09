@@ -64,7 +64,7 @@ With AI Academic Paper Search, we can easily and quickly access paper informatio
 
 ## ✨ About 302.AI ✨
 
-[302.AI](https://302.ai) is a pay-as-you-go AI application platform designed to solve the last mile problem of AI implementation for users.
+[302.AI](https://302.ai) is an enterprise-oriented AI application platform that offers pay-as-you-go services, ready-to-use solutions, and an open-source ecosystem.✨
 1. 🧠 It aggregates the latest and most comprehensive AI capabilities and brands, including but not limited to language models, image models, audio models, and video models.
 2. 🚀 Conducts deep application development on foundational models, creating real AI products rather than simple chatbots.
 3. 💰 Zero monthly fees, all features are available on a pay-as-you-go basis, fully open with truly low barriers and high limits.

@@ -2,7 +2,7 @@
 
 <p align="center">AI学术论文搜索通过用户的关键字在Arxiv和Google学术中搜索论文，使用AI对论文内容加以解析，并提供生成全文摘要、全文翻译等功能，还可以将论文内容作为上下文，通过与AI对话快速深入理解论文。</p>
 
-<p align="center"><a href="https://302.ai/tools/academic/" target="blank"><img src="https://file.302ai.cn/gpt/imgs/github/302_badge.png" /></a></p >
+<p align="center"><a href="https://302.ai/tools/academic/" target="blank"><img src="https://file.302.ai/gpt/imgs/github/20250102/72a57c4263944b73bf521830878ae39a.png" /></a></p >
 
 <p align="center"><a href="README_zh.md">中文</a> | <a href="README.md">English</a> | <a href="README_ja.md">日本語</a></p>
 

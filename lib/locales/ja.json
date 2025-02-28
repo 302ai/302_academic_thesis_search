@@ -114,5 +114,11 @@
   "translation_summary_retry ": "「全文要約を生成する」を再クリック",
   "summary_progress": "全文抄録作成の進捗状況は、",
   "thesis": "論文",
-  "full_text_summary": "全文要約"
+  "full_text_summary": "全文要約",
+  "downloadingMessage": "ダウンロード中、しばらくお待ちください...",
+  "downloadFailed": "ダウンロードに失敗しました",
+  "translationResult": "翻訳結果：",
+  "searchResult": "検索結果：",
+  "fullTextSummary": "全文の要約：",
+  "noHistoryRecords": "操作履歴はありません"
 }

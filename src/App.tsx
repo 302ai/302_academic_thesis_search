@@ -13,20 +13,12 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { LanguagePopover } from "./components/LanguagePopover";
 import { selectGlobal, setGlobalState } from "./store/globalSlice";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "./components/ui/select";
+import { addData, Data, IAIAcademicRecordList } from "./components/HistoricalRecords/indexedDB";
+import dayjs from "dayjs";
+import { HistoricalRecords } from "./components/HistoricalRecords";
 
 
 const headers = { "accept": "application/json", "Content-Type": "application/json" }
-
-type Data = {
-  summary: string;
-  entry_id: string;
-  title: string;
-  authors: string;
-  updated: number;
-  pdf_url: string;
-  translated_title: string;
-  data_cid: string;
-}
 
 const SEARCH_TYPE: {
   [key: string]: string
@@ -60,6 +52,43 @@ function App() {
     dispatch(setGlobalState({ language: lang }))
   }, [])
 
+
+  const onSearchList = async (searchQuery: string, offset: number, res: any, type: 'search' | 'next' | 'Prev') => {
+    setDataQuery(searchQuery)
+    setQueryPage(offset)
+    setNextPage(res.data.next_page)
+    setTotalResults(res.data.total_results)
+    setData(res.data.olist);
+    if (type === 'search') {
+      await addData({
+        type: 'search',
+        title: query,
+        created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        search: {
+          query,
+          sortBy,
+          list: res.data.olist,
+          searchType: searchType.type,
+          next_page: res.data.next_page,
+          total_results: res.data.total_results,
+        }
+      })
+    }
+  }
+
+  const onPreview = (item: IAIAcademicRecordList) => {
+    if (item.type === 'search' && item.search) {
+      setQueryPage(1)
+      setQuery(item.title)
+      setDataQuery(item.title)
+      setSortBy(item.search.sortBy)
+      setData(item.search.list || [])
+      setNextPage(item.search.next_page)
+      setTotalResults(item.search.total_results)
+      setSearchType({ type: item.search.searchType, mode: item.search.searchType })
+    }
+  }
+
   // 获取arxiv
   const [translateMap, setTranslateMap] = useState<{ [key: string]: string }>({})
   const [totalResults, setTotalResults] = useState<number | undefined>(undefined)
@@ -70,7 +99,7 @@ function App() {
   const [querying, setQuerying] = useState(false)
   const [sortBy, setSortBy] = useState<'relevance' | '-submitted_date'>("relevance")
   const [searchType, setSearchType] = useState<{ type: string, mode: string }>({ type: 'arxiv', mode: 'arxiv' })
-  const getArxiv = async (query: string, offset: number, sort_by?: string) => {
+  const getArxiv = async (type: 'search' | 'next' | 'Prev', query: string, offset: number, sort_by?: string) => {
 
     const searchUrl = searchType.type === "arxiv" ? ARXIV_SEARCH : GOOGLE_SEARCH;
     const searchQuery = query.trimStart().trimEnd();
@@ -109,11 +138,7 @@ function App() {
             })
             return
           }
-          setDataQuery(searchQuery)
-          setQueryPage(offset)
-          setNextPage(res.data.next_page)
-          setTotalResults(res.data.total_results)
-          setData(res.data.olist)
+          onSearchList(searchQuery, offset, res, type)
         }).finally(() => {
           setQuerying(false)
         })
@@ -140,11 +165,7 @@ function App() {
             })
             return
           }
-          setDataQuery(translateMap[searchQuery])
-          setQueryPage(offset)
-          setNextPage(res.data.next_page)
-          setTotalResults(res.data.total_results)
-          setData(res.data.olist)
+          onSearchList(translateMap[searchQuery], offset, res, type)
         }).finally(() => {
           setQuerying(false)
         })
@@ -200,11 +221,7 @@ function App() {
                 const translateMapTemp = translateMap
                 translateMapTemp[searchQuery] = tranlation
                 setTranslateMap(translateMapTemp)
-                setDataQuery(tranlation)
-                setQueryPage(offset)
-                setNextPage(res.data.next_page)
-                setTotalResults(res.data.total_results)
-                setData(res.data.olist)
+                onSearchList(tranlation, offset, res, type)
               }).finally(() => {
                 setQuerying(false)
               })
@@ -234,11 +251,7 @@ function App() {
               })
               return
             }
-            setDataQuery(searchQuery)
-            setQueryPage(offset)
-            setNextPage(res.data.next_page)
-            setTotalResults(res.data.total_results)
-            setData(res.data.olist)
+            onSearchList(searchQuery, offset, res, type)
           }).finally(() => {
             setQuerying(false)
           })
@@ -303,8 +316,9 @@ function App() {
       <div className={`${data?.length ? '' : 'flex-1'} relative `}>
         <div className="main-container mx-auto h-full lg:p-6 p-3 flex flex-col relative">
           <div className="flex justify-end p-2 box-border">
-            <div >
-              <div className='flex absolute right-2 top-2'><LanguagePopover /></div>
+            <div className='fixed right-4 top-1 flex items-center gap-3' >
+              <HistoricalRecords onPreview={onPreview} />
+              <LanguagePopover />
             </div>
           </div>
           <div>
@@ -359,7 +373,7 @@ function App() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button id="query-button" onClick={() => getArxiv(query, 1)} disabled={querying || !query || translateSearchTerms}>
+              <Button id="query-button" onClick={() => getArxiv('search', query, 1)} disabled={querying || !query || translateSearchTerms}>
                 {querying ? <Spinner /> : <svg width="18" height="18" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>}
               </Button>
             </div>
@@ -396,14 +410,14 @@ function App() {
             </div>
             {
               data?.length ? <div className="flex justify-center gap-2 mt-3">
-                <div className={cn("pagenation", (queryPage === 1 || querying) ? "cursor-not-allowed" : "cursor-pointer")} style={{ backgroundColor: (queryPage === 1 || querying) ? "#f5f7fa" : "" }} onClick={() => queryPage !== 1 && !querying && getArxiv(dataQuery, queryPage - 1)}>
+                <div className={cn("pagenation", (queryPage === 1 || querying) ? "cursor-not-allowed" : "cursor-pointer")} style={{ backgroundColor: (queryPage === 1 || querying) ? "#f5f7fa" : "" }} onClick={() => queryPage !== 1 && !querying && getArxiv('Prev', dataQuery, queryPage - 1)}>
                   <svg width="17.5" height="17.5" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.81809 4.18179C8.99383 4.35753 8.99383 4.64245 8.81809 4.81819L6.13629 7.49999L8.81809 10.1818C8.99383 10.3575 8.99383 10.6424 8.81809 10.8182C8.64236 10.9939 8.35743 10.9939 8.1817 10.8182L5.1817 7.81819C5.09731 7.73379 5.0499 7.61933 5.0499 7.49999C5.0499 7.38064 5.09731 7.26618 5.1817 7.18179L8.1817 4.18179C8.35743 4.00605 8.64236 4.00605 8.81809 4.18179Z" fill={(queryPage === 1 || querying) ? "#a8abb2" : "currentColor"} fillRule="evenodd" clipRule="evenodd"></path></svg>
                 </div>
                 <div className="pagenation text-sm gap-2" style={{ width: 60 }}>
                   {querying && <Spinner />}
                   {queryPage}
                 </div>
-                <div className={cn("pagenation", (!nextPage || querying) ? "cursor-not-allowed" : "cursor-pointer")} onClick={() => nextPage && !querying && getArxiv(dataQuery, queryPage + 1)}>
+                <div className={cn("pagenation", (!nextPage || querying) ? "cursor-not-allowed" : "cursor-pointer")} onClick={() => nextPage && !querying && getArxiv('next', dataQuery, queryPage + 1)}>
                   <svg width="17.5" height="17.5" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.18194 4.18185C6.35767 4.00611 6.6426 4.00611 6.81833 4.18185L9.81833 7.18185C9.90272 7.26624 9.95013 7.3807 9.95013 7.50005C9.95013 7.6194 9.90272 7.73386 9.81833 7.81825L6.81833 10.8182C6.6426 10.994 6.35767 10.994 6.18194 10.8182C6.0062 10.6425 6.0062 10.3576 6.18194 10.1819L8.86374 7.50005L6.18194 4.81825C6.0062 4.64251 6.0062 4.35759 6.18194 4.18185Z" fill={(!nextPage || querying) ? "#a8abb2" : "currentColor"} fillRule="evenodd" clipRule="evenodd"></path></svg>
                 </div>
               </div> : <></>
@@ -441,14 +455,14 @@ function App() {
             </div>
             {
               data?.length ? <div className="flex justify-center gap-2 mt-3">
-                <div className={cn("pagenation", (queryPage === 1 || querying) ? "cursor-not-allowed" : "cursor-pointer")} style={{ backgroundColor: (queryPage === 1 || querying) ? "#f5f7fa" : "" }} onClick={() => queryPage !== 1 && !querying && getArxiv(dataQuery, queryPage - 1)}>
+                <div className={cn("pagenation", (queryPage === 1 || querying) ? "cursor-not-allowed" : "cursor-pointer")} style={{ backgroundColor: (queryPage === 1 || querying) ? "#f5f7fa" : "" }} onClick={() => queryPage !== 1 && !querying && getArxiv('Prev', dataQuery, queryPage - 1)}>
                   <svg width="17.5" height="17.5" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.81809 4.18179C8.99383 4.35753 8.99383 4.64245 8.81809 4.81819L6.13629 7.49999L8.81809 10.1818C8.99383 10.3575 8.99383 10.6424 8.81809 10.8182C8.64236 10.9939 8.35743 10.9939 8.1817 10.8182L5.1817 7.81819C5.09731 7.73379 5.0499 7.61933 5.0499 7.49999C5.0499 7.38064 5.09731 7.26618 5.1817 7.18179L8.1817 4.18179C8.35743 4.00605 8.64236 4.00605 8.81809 4.18179Z" fill={(queryPage === 1 || querying) ? "#a8abb2" : "currentColor"} fillRule="evenodd" clipRule="evenodd"></path></svg>
                 </div>
                 <div className="pagenation text-sm gap-2" style={{ width: 60 }}>
                   {querying && <Spinner />}
                   {queryPage}
                 </div>
-                <div className={cn("pagenation", (!nextPage || querying) ? "cursor-not-allowed" : "cursor-pointer")} onClick={() => nextPage && !querying && getArxiv(dataQuery, queryPage + 1)}>
+                <div className={cn("pagenation", (!nextPage || querying) ? "cursor-not-allowed" : "cursor-pointer")} onClick={() => nextPage && !querying && getArxiv('next', dataQuery, queryPage + 1)}>
                   <svg width="17.5" height="17.5" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.18194 4.18185C6.35767 4.00611 6.6426 4.00611 6.81833 4.18185L9.81833 7.18185C9.90272 7.26624 9.95013 7.3807 9.95013 7.50005C9.95013 7.6194 9.90272 7.73386 9.81833 7.81825L6.81833 10.8182C6.6426 10.994 6.35767 10.994 6.18194 10.8182C6.0062 10.6425 6.0062 10.3576 6.18194 10.1819L8.86374 7.50005L6.18194 4.81825C6.0062 4.64251 6.0062 4.35759 6.18194 4.18185Z" fill={(!nextPage || querying) ? "#a8abb2" : "currentColor"} fillRule="evenodd" clipRule="evenodd"></path></svg>
                 </div>
               </div> : <></>

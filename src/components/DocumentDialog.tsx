@@ -13,20 +13,13 @@ import { useAppSelector } from "../store/hooks";
 import { marked } from "marked"
 import Loading from "./ui/loading";
 import { useTranslation } from "react-i18next";
+import { addData, Data, IAIAcademicRecordList } from "./HistoricalRecords/indexedDB";
+import { FaEye } from "react-icons/fa";
+import dayjs from 'dayjs'
 
 const headers = {
   "accept": "application/json",
   "Content-Type": "application/json"
-}
-
-type Data = {
-  entry_id: string;
-  title: string;
-  summary: string;
-  authors: string;
-  updated: number;
-  pdf_url: string;
-  translated_title: string;
 }
 
 const region = import.meta.env.VITE_APP_REGION;
@@ -40,8 +33,9 @@ const TASKS_URL = import.meta.env.VITE_APP_TASKS_URL;
 const DOMAIN_NAME_URL = import.meta.env.VITE_APP_DOMAIN_NAME_URL;
 
 
+interface IProps { document: Data, searchType?: string, isRecord?: boolean, recordData?: IAIAcademicRecordList }
 
-export default function DocumentDialog({ document, searchType }: { document: Data, searchType?: string }) {
+export default function DocumentDialog({ document, searchType, isRecord, recordData }: IProps) {
   const { t } = useTranslation()
   const [userAgent, setUserAgent] = useState("")
   useEffect(() => {
@@ -219,7 +213,7 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
       })
     }).then(res => res.text())
       .then(res => JSON.parse(res))
-      .then(res => {
+      .then(async res => {
         if (res.data.err_code) {
           setSummarying(false)
           toast.error(res.data.err_code)
@@ -232,6 +226,21 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
           })
           setSummarying(false)
           toScrollBottom("summary")
+          if (res.data.cache_data.progress === 100) {
+            await addData({
+              type: 'summary',
+              title: document.title,
+              created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+              summary: {
+                data: {
+                  history: res.data.cache_data.history,
+                  progress: 1000
+                },
+                item: document,
+                searchType: searchType || ''
+              }
+            })
+          }
         }
         else getTaskInfo(res.data.task_id, "summary")
       })
@@ -303,7 +312,7 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
         headers
       }).then(res => res.text())
         .then(res => JSON.parse(res))
-        .then(res => {
+        .then(async res => {
           if (res.data.progress === -1) {
             if (type === "summary") setSummarying(false)
             else if (type === "translate") setTranslating(false)
@@ -334,6 +343,12 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
               if (res.data.history[i].indexOf("merge_translate_zh_pdf_url-") > -1) {
                 const pdfUrl = res.data.history[i].split("merge_translate_zh_pdf_url-")[1]
                 setTranslatePdfUrl(pdfUrl)
+                await addData({
+                  type: 'translate',
+                  title: document.title,
+                  created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                  translateFiel: pdfUrl,
+                })
                 break
               }
             }
@@ -345,7 +360,20 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
             })
           }
           if (res.data.progress === 100) {
-            if (type === "summary") setSummarying(false)
+            if (type === "summary") {
+              console.log('========', data);
+              setSummarying(false)
+              await addData({
+                type: 'summary',
+                title: document.title,
+                created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                summary: {
+                  data: { ...data },
+                  item: document,
+                  searchType: searchType || ''
+                }
+              })
+            }
             else if (type === "translate") setTranslating(false)
             else if (type === "parse") {
               setParseTaskId(taskId)
@@ -459,6 +487,11 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
           setTranslating(false)
         }
       }
+    } else if (recordData && recordData.summary) {
+      setSummary({
+        history: recordData.summary.data.history,
+        progress: recordData.summary.data.progress,
+      })
     } else {
       toScrollBottom("answer", "instant")
       toScrollBottom("summary", "instant")
@@ -466,12 +499,15 @@ export default function DocumentDialog({ document, searchType }: { document: Dat
     }
   }}>
     <DialogTrigger>
-      <Button variant="secondary" size="sm" onClick={() => {
-        setTimeout(() => {
-          setHeight()
-          setLoading(true)
-        })
-      }}>{t("open")}</Button>
+      {
+        isRecord ? <Button variant="ghost" className="p-0 m-0 hover:bg-transparent"><FaEye /></Button> :
+          <Button variant="secondary" size="sm" onClick={() => {
+            setTimeout(() => {
+              setHeight()
+              setLoading(true)
+            })
+          }}>{t("open")}</Button>
+      }
     </DialogTrigger>
     <DialogContent hidden={true} className="p-0 flex flex-col" style={{ maxWidth: 2560, margin: '0 auto' }}>
       <div className="flex justify-center text-lg font-bold text-center py-1 desktop-data-list" style={{ backgroundColor: "#f7f9f8", borderBottom: "1px solid rgb(240, 240, 243)" }}>

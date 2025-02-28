@@ -114,5 +114,11 @@
   "translation_summary_retry ": "重试生成全文摘要",
   "summary_progress": "生成全文摘要进度为",
   "thesis": "论文",
-  "full_text_summary": "全文摘要"
+  "full_text_summary": "全文摘要",
+  "downloadingMessage": "下载中，请稍候...",
+  "downloadFailed": "下载失败",
+  "translationResult": "翻译结果：",
+  "searchResult": "搜索结果：",
+  "fullTextSummary": "全文摘要：",
+  "noHistoryRecords": "没有操作记录"
 }

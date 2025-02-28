@@ -114,5 +114,11 @@
   "translation_summary_retry ": "Retry to generate full text summary",
   "summary_progress": "The progress of generating full-text abstracts is",
   "thesis": "Thesis",
-  "full_text_summary": "Full text summary"
+  "full_text_summary": "Full text summary",
+  "downloadingMessage": "Downloading, please wait...",
+  "downloadFailed": "Download failed",
+  "translationResult": "Translation Result:",
+  "searchResult": "Search Result:",
+  "fullTextSummary": "Full Text Summary:",
+  "noHistoryRecords": "No history records available"
 }

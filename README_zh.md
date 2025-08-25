@@ -2,13 +2,13 @@
 
 <p align="center">AI学术论文搜索通过用户的关键字在Arxiv和Google学术中搜索论文，使用AI对论文内容加以解析，并提供生成全文摘要、全文翻译等功能，还可以将论文内容作为上下文，通过与AI对话快速深入理解论文。</p>
 
-<p align="center"><a href="https://302.ai/tools/academic/" target="blank"><img src="https://file.302.ai/gpt/imgs/github/20250102/72a57c4263944b73bf521830878ae39a.png" /></a></p >
+<p align="center"><a href="https://302.ai/product/detail/16" target="blank"><img src="https://file.302.ai/gpt/imgs/github/20250102/72a57c4263944b73bf521830878ae39a.png" /></a></p >
 
 <p align="center"><a href="README_zh.md">中文</a> | <a href="README.md">English</a> | <a href="README_ja.md">日本語</a></p>
 
 ![界面预览](docs/AI学术论文搜索.png)    
 
-来自[302.AI](https://302.ai)的[AI学术论文搜索](https://302.ai/tools/academic/)的开源版本。
+来自[302.AI](https://302.ai)的[AI学术论文搜索](https://302.ai/product/detail/16)的开源版本。
 你可以直接登录302.AI，零代码零配置使用在线版本。
 或者对本项目根据自己的需求进行修改，传入302.AI的API KEY，自行部署。
 
